@@ -8,7 +8,7 @@ def IsPalendrome(num):
 
 
 amount=0
-for i in range(1, 10000):
+for i in range(0, 10001):
     num=i
     amount+=1
     for x in range(0, 50):
