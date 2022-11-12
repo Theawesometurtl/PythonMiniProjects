@@ -1,5 +1,5 @@
 listOfRows = []
-rows=largestProduct=c=r=0
+rows=largestNum=c=r=0
 
 with open('TriangleOfNums.txt', 'r') as reader:
     for line in reader:
@@ -11,7 +11,11 @@ for i in range(0, len(listOfRows)):
     listOfRows[i] = row[0].split()
 
 #brute force
+max = [listOfRows[0][0]]
 for i in range(0, 1000000):
-    for r in range(0, 15):
-        #do stuff
+    for r in range(1, len(listOfRows[i])):
+        if max[r] > max[r-1]:
+            newMax = max[r]
+        else:
+            newMax = max[r-1]
     
