@@ -1,7 +1,7 @@
 matrix = [
-    [-3, -1, 3, -3],
-    [0, -2, -1, 1],
-    [3, 2, -3, 0]
+    [2, 0, -3, 4],
+    [1, 5, 3, 2],
+    [-3, 1, 0, 5]
 ]
 
 def equalize_columns(c: int, matrix: list[list[int]]) -> list[list[int]]:
@@ -36,16 +36,16 @@ def solve_matrix(matrix: list[list[int]]) -> list[list[int]]:
     matrix = make_zeros_convenient(0, matrix)
 
     for c in range(len(matrix[0])-1):
-        print(matrix)
+        # print(matrix)
         #first, make column equal
         matrix = equalize_columns(c, matrix)
         
             
-        print(matrix)
+        # print(matrix)
         #then, subtract columns
         
         matrix = subtract_columns(c, matrix)
-    print(matrix)
+    # print(matrix)
     for c in range(len(matrix[0])-1):
         matrix = equalize_columns(c, matrix)
                     
@@ -54,4 +54,5 @@ def solve_matrix(matrix: list[list[int]]) -> list[list[int]]:
 
         
 m = solve_matrix(matrix)
-print(m)
+for row in matrix:
+    print(row)
