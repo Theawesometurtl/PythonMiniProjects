@@ -1,0 +1,104 @@
+from skimage.io import imread, imshow
+from skimage import transform
+import ffmpeg
+import os
+import glob
+import subprocess
+import matplotlib.pyplot as plt
+import numpy as np
+from time import sleep
+import matplotlib.cm as cm
+import matplotlib.animation as animation
+
+chess = imread('chess3.jpg')
+imshow(chess)
+
+#source coordinates
+src = np.array([
+                908, 2714,#h8
+                2140, 2709,#h1
+                2460, 3710,#a1
+                492, 3669, #a8 
+                ]).reshape((4, 2))
+# src = np.array([391, 100, 
+#                 14, 271,
+#                 347, 624,
+#                 747, 298,]).reshape((4, 2))
+#destination coordinates
+dst = np.array([3000, 100, 
+                3000, 3000,
+                100, 3000,
+                100, 100,]).reshape((4, 2))
+#using skimage’s transform module where ‘projective’ is our desired parameter
+tform = transform.estimate_transform('projective', src, dst)
+tf_img = transform.warp(chess, tform.inverse)
+#plotting the transformed image
+fig, ax = plt.subplots()
+ax.imshow(tf_img)
+_ = ax.set_title('Perspective Shift of Chess Board')
+
+
+img = [] # some array of images
+
+# src_example = [391, 100, 
+#                 14, 271,
+#                 347, 624,
+#                 747, 298,]
+src_example = [
+                908, 2714,#h8
+                2140, 2709,#h1
+                2460, 3710,#a1
+                492, 3669, #a8
+                ]
+# src_example = [
+#                 2201, 1487,#h8
+#                 2979, 3086,#h1
+#                 217, 3375,#a1
+#                 389, 1405, #a8
+#                 ]
+dst_example = [3000, 100, 
+                3000, 3000,
+                100, 3000,
+                100, 100,]
+
+for i in range(0, 101):
+    #source coordinates
+    dst_array = []
+    for n in range(0, 8):
+        dst_array.append(src_example[n] - (src_example[n] - dst_example[n])*0.01*i)
+    #destination coordinates
+    dst = np.array(dst_array).reshape((4, 2))
+    #using skimage’s transform module where ‘projective’ is our desired parameter
+    tform = transform.estimate_transform('projective', src, dst)
+    tf_img = transform.warp(chess, tform.inverse)
+    img.append(tf_img)
+
+folder = "./image_folder"
+
+def generate_video(img):
+    for i in range(len(img)):
+        plt.imshow(img[i], cmap=cm.Greys_r)
+        
+        plt.savefig(folder + "/file%02d.png" % i)
+        plt.close()
+
+    os.chdir(folder)
+    subprocess.call([
+        'ffmpeg', '-framerate', '30', '-i', 'file%02d.png', '-r', '30', '-pix_fmt', 'yuv420p',
+        'video_name.mp4'
+    ])
+    # for file_name in glob.glob("*.png"):
+    #     os.remove(file_name)
+
+# frames = [] # for storing the generated images
+# fig = plt.figure()
+# for i in range(0, 51):
+#     frames.append([plt.imshow(img[i], cmap=cm.Greys_r,animated=True)])
+
+# ani = animation.ArtistAnimation(fig, frames, interval=5, blit=True,
+#                                 repeat_delay=0)
+# ani.save('movie.mp4')
+print("finished frames, generating video")
+generate_video(img)
+# plt.show()
+
